@@ -6,6 +6,12 @@ BASE_DIR =os.path.dirname(os.path.realpath(__file__))
 # # to set FLASK_APP = api/  as enviornment variable in project.
 # FLASK_APP = config('FLASK_APP')
 # print(f'FLASK_APP value: {FLASK_APP}')
+
+# postgress horuku deployment.
+uri = config("DATABASE_URL")
+if uri.startswith("postgres://"):
+    uri = uri.replace("postgress://","postgresql://",1)
+
 class Config:
     SECRET_KEY = config('SECRET_KEY','secret')
     SQLALCHEMY_TRACK_MODIFICATION =False
@@ -19,7 +25,7 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI ='sqlite:///'+os.path.join(BASE_DIR,'db.sqlite3')
     SQLALCHEMY_TRACK_MODIFICATION=False
 class ProdConfig(Config):
-    SQLALCHEMY_DATABASE_URI = config('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = uri
     SQLALCHEMY_TRACK_MODIFICATION=False
     DEBUG = config('DEBUG', cast= bool)
 
