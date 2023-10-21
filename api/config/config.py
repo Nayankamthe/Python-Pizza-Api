@@ -6,6 +6,14 @@ BASE_DIR =os.path.dirname(os.path.realpath(__file__))
 # # to set FLASK_APP = api/  as enviornment variable in project.
 # FLASK_APP = config('FLASK_APP')
 # print(f'FLASK_APP value: {FLASK_APP}')
+
+import os
+import re
+
+uri = os.getenv("DATABASE_URL")
+if uri.startswith("postgres"):
+    uri = uri.replace("postgres://","postgresql://",1)
+
 class Config:
     SECRET_KEY = config('SECRET_KEY','secret')
     SQLALCHEMY_TRACK_MODIFICATION =False
@@ -19,7 +27,7 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI ='sqlite:///'+os.path.join(BASE_DIR,'db.sqlite3')
     SQLALCHEMY_TRACK_MODIFICATION=False
 class ProdConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///'
+    SQLALCHEMY_DATABASE_URI = uri
     SQLALCHEMY_TRACK_MODIFICATION=False
     DEBUG = config('DEBUG', cast= bool)
 
