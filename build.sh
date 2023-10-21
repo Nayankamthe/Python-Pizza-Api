@@ -4,7 +4,7 @@ set -o errexit
 
 pip install -r requirements.txt
 
-cmd /c env\\Scripts\\activate
+# env\\Scripts\\activate.bat
 
 export FLASK_APP=runserver.py
 
