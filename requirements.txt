@@ -31,4 +31,4 @@ referencing==0.8.9
 SQLAlchemy==2.0.19
 tomli==2.0.1
 typing_extensions==4.7.1
-Werkzeug==2.3.6
+Werkzeug==2.2.3
