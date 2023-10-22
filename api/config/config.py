@@ -12,8 +12,8 @@ import re
 
 try:
     uri = os.getenv("DATABASE_URL")
-    if uri.startswith("postgres"):
-        uri = uri.replace("postgres://","postgresql://",1)
+    # if uri.startswith("postgres"):
+    #     uri = uri.replace("postgres://","postgresql://",1)
 except Exception as e:
     print("Database string not found!",e)
 
