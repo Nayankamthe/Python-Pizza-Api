@@ -4,6 +4,7 @@ from ..models.orders import Order
 from ..models.users import User
 from http import HTTPStatus
 from ..utils import db
+from werkzeug.exceptions import Conflict,BadRequest
 
 order_namespace = Namespace('orders',description="Namespace for orders")
 
@@ -59,22 +60,24 @@ class OrderGetCreate(Resource):
     @jwt_required()
     def post(self):
         """ Place new Order"""
-        
-        username = get_jwt_identity()
+        try:
+            username = get_jwt_identity()
 
-        current_user = User.query.filter_by(username=username).first()
-        data = order_namespace.payload
+            current_user = User.query.filter_by(username=username).first()
+            data = order_namespace.payload
 
-        new_order = Order(
-            size=data['size'],
-            quantity = data['quantity'],
-            flavour = data['flavour'],
-            price = data['price']
-        )
+            new_order = Order(
+                size=data['size'],
+                quantity = data['quantity'],
+                flavour = data['flavour'],
+                price = data['price']
+            )
 
-        new_order.user = current_user
-        new_order.save()
-        return new_order, HTTPStatus.CREATED
+            new_order.user = current_user
+            new_order.save()
+            return new_order, HTTPStatus.CREATED
+        except Exception as e:
+            raise Conflict(f"Unable to place order for user {username}, Error Code :{e}")
 
 @order_namespace.route('/order/<int:order_id>')
 class GetUpdateDelete(Resource):
@@ -92,8 +95,12 @@ class GetUpdateDelete(Resource):
         """
             Retrive order of specific id
         """
-        order = Order.get_by_id(order_id)
-        return order,HTTPStatus.OK
+        try:
+
+            order = Order.get_by_id(order_id)
+            return order,HTTPStatus.OK
+        except Exception as e:
+            raise BadRequest(f"Unable to retrive Orders, Error Code :{e}")
 
     @order_namespace.expect(order_place_or_update_model)
     @order_namespace.marshal_with(order_model)
@@ -108,16 +115,19 @@ class GetUpdateDelete(Resource):
         """
             Update order by id
         """
-        order_to_update = Order.get_by_id(order_id)
-        data = order_namespace.payload
+        try:
+            order_to_update = Order.get_by_id(order_id)
+            data = order_namespace.payload
 
-        order_to_update.quantity = data['quantity']
-        order_to_update.size = data['size']
-        order_to_update.flavour = data['flavour']
-        order_to_update.price = data['price']
-        db.session.commit()
+            order_to_update.quantity = data['quantity']
+            order_to_update.size = data['size']
+            order_to_update.flavour = data['flavour']
+            order_to_update.price = data['price']
+            db.session.commit()
 
-        return order_to_update, HTTPStatus.OK
+            return order_to_update, HTTPStatus.OK
+        except Exception as e:
+            raise BadRequest(f"Unable to update the order,error code:{e}")
 
     @order_namespace.marshal_with(order_model)
     @order_namespace.doc(
@@ -131,9 +141,12 @@ class GetUpdateDelete(Resource):
         """
             Delete order by id
         """
-        order_id_delete = Order.get_by_id(order_id)
-        order_id_delete.delete()
-        return order_id_delete, HTTPStatus.OK
+        try:
+            order_id_delete = Order.get_by_id(order_id)
+            order_id_delete.delete()
+            return order_id_delete, HTTPStatus.OK
+        except Exception as e:
+            raise Conflict(f"Unable to Delete Order, Error code: {e}")
     
 @order_namespace.route('/user/<int:user_id>/order/<int:order_id>')
 class GetSpecificOrderByUser(Resource):
@@ -151,11 +164,14 @@ class GetSpecificOrderByUser(Resource):
         """
             Get user specific order.
         """
-        user = User.get_by_id(user_id)
+        try:
+            user = User.get_by_id(user_id)
 
-        order = Order.query.filter_by(id=order_id).filter_by(user=user).first()
+            order = Order.query.filter_by(id=order_id).filter_by(user=user).first()
 
-        return order, HTTPStatus.OK
+            return order, HTTPStatus.OK
+        except Exception as e:
+            raise BadRequest(f"Unable to Retrive the Order,Error Code: {e}")
 
 @order_namespace.route('/user/<int:user_id>/orders')
 class UserOrders(Resource):
@@ -171,9 +187,12 @@ class UserOrders(Resource):
         """
             Get all Order By Specific User.
         """
-        user = User.get_by_id(user_id)
-        orders = user.orders
-        return orders, HTTPStatus.OK
+        try:
+            user = User.get_by_id(user_id)
+            orders = user.orders
+            return orders, HTTPStatus.OK
+        except Exception as e:
+            raise BadRequest(f"Unable to Retrive the User Specific Order, Error code: {e}")
 
 @order_namespace.route('/order/status/<int:order_id>')
 class UpdateOrderStatus(Resource):
@@ -191,15 +210,18 @@ class UpdateOrderStatus(Resource):
         """
             Update an Order Status.
         """
-        data = order_namespace.payload
+        try:
+            data = order_namespace.payload
 
-        order_to_update = Order.get_by_id(order_id)
+            order_to_update = Order.get_by_id(order_id)
 
-        order_to_update.order_status = data['order_status']
-        
-        db.session.commit()
+            order_to_update.order_status = data['order_status']
+            
+            db.session.commit()
 
-        return order_to_update, HTTPStatus.OK
+            return order_to_update, HTTPStatus.OK
+        except Exception as e:
+            raise BadRequest(f"Unable to Update the Order Status,Error code: {e}")
 
 
 
