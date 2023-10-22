@@ -32,7 +32,7 @@ order_place_or_update_model = order_namespace.model(
         'size': fields.String(description ="Size of Order",required=True,
         enum=['SMALL','MEDIUM','LARGE','EXTRA_LARGE']),
         'quatity': fields.String(description ="Quantity of the Order", required=True),
-        'flavour': fields.Integer(description="Flaour of Order",required=True),
+        'flavour': fields.String(description="Flaour of Order",required=True),
         'price': fields.Integer(description="Price of the item")
     }
 )
