@@ -32,8 +32,8 @@ order_place_or_update_model = order_namespace.model(
         'id':fields.Integer(description="An ID"),
         'size': fields.String(description ="Size of Order",required=True,
         enum=['SMALL','MEDIUM','LARGE','EXTRA_LARGE']),
-        'quatity': fields.String(description ="Quantity of the Order", required=True),
-        'flavour': fields.String(description="Flaour of Order",required=True),
+        'quantity': fields.String(description ="Quantity of the Order", required=True),
+        'flavour': fields.String(description="Flavour of Order",required=True),
         'price': fields.Integer(description="Price of the item")
     }
 )
@@ -68,7 +68,7 @@ class OrderGetCreate(Resource):
 
             new_order = Order(
                 size=data['size'],
-                quantity = data['quatity'],
+                quantity = data['quantity'],
                 flavour = data['flavour'],
                 price = data['price']
             )
