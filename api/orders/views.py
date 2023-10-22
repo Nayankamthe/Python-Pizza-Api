@@ -68,7 +68,7 @@ class OrderGetCreate(Resource):
 
             new_order = Order(
                 size=data['size'],
-                quantity = data['quantity'],
+                quantity = data['quatity'],
                 flavour = data['flavour'],
                 price = data['price']
             )
