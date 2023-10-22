@@ -18,21 +18,10 @@ export FLASK_APP=runserver.py
 
 # Start Flask shell and run individual commands
 flask shell <<EOF
-from your_app.models import db, User, Order
 
-# Create the database tables (if they don't exist)
+db
+User
+Order
 db.create_all()
 
-# Access the Order and User models
-orders = Order.query.all()
-users = User.query.all()
-
-# Display the results or perform any further actions
-print("Orders:")
-for order in orders:
-    print(order)
-
-print("Users:")
-for user in users:
-    print(user)
 EOF
