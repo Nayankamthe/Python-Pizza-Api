@@ -10,9 +10,12 @@ BASE_DIR =os.path.dirname(os.path.realpath(__file__))
 import os
 import re
 
-uri = os.getenv("DATABASE_URL")
-if uri.startswith("postgres"):
-    uri = uri.replace("postgres://","postgresql://",1)
+try:
+    uri = os.getenv("DATABASE_URL")
+    if uri.startswith("postgres"):
+        uri = uri.replace("postgres://","postgresql://",1)
+except Exception as e:
+    print("Database string not found!",e)
 
 class Config:
     SECRET_KEY = config('SECRET_KEY','secret')
